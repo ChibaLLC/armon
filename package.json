@@ -6,7 +6,6 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "prepare": "pnpm link .",
     "dev": "tsc -w",
     "build": "tsc",
     "preview": "echo 'No preview available yet.'",
