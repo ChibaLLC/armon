@@ -1,13 +1,16 @@
 {
   "name": "@chiballc/armon",
+  "repository": "ChibaLLC/armon",
+  "description": "A new way to build web apps. No routes, just functions.",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "prepare":"pnpm link .",
+    "prepare": "pnpm link .",
     "dev": "tsc -w",
     "build": "tsc",
-    "preview": "echo 'No preview available yet.'"
+    "preview": "echo 'No preview available yet.'",
+    "release": "pnpm build && pnpm dlx changelogen --release"
   },
   "devDependencies": {
     "typescript": "^5.2.2"
