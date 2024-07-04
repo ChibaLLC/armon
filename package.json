@@ -5,7 +5,6 @@
     "url": "git+https://github.com/ChibaLLC/armon.git"
   },
   "description": "A new way to build web apps. No routes, just functions.",
-  "private": true,
   "version": "0.0.1",
   "type": "module",
   "scripts": {
