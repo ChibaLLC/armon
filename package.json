@@ -1,0 +1,19 @@
+{
+  "name": "@chiballc/armon",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "prepare":"pnpm link .",
+    "dev": "tsc -w",
+    "build": "tsc",
+    "preview": "echo 'No preview available yet.'"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "h3": "^1.12.0"
+  }
+}
