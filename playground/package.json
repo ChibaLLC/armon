@@ -13,6 +13,6 @@
     "vite": "^5.3.1"
   },
   "dependencies": {
-    "@chiballc/armon": "^0.0.1"
+    "@chiballc/armon": "link:C:/Users/Bosir/Desktop/armon"
   }
 }

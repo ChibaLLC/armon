@@ -1,3 +1,7 @@
-import log from "@chiballc/armon"
+import {log, test, another} from "@chiballc/armon"
 
-log("Hello, World!");
+function main() {
+    log("Hello, World!");
+}
+
+another();

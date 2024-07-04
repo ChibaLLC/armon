@@ -1,5 +1,13 @@
 import log from "./watcher";
 
-export default function main() {
+function test(){
     log("Hello, World!");
 }
+
+function another(){
+    log("Another function");
+}
+
+console.log("Hello, World!");
+
+export {log, test, another}

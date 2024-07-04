@@ -7,14 +7,29 @@
   "description": "A new way to build web apps. No routes, just functions.",
   "private": false,
   "version": "0.0.2",
+  "types": "dist/main.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/main.js",
+      "require": "./dist/main.js",
+      "types": "./dist/main.d.ts"
+    }
+  },
   "type": "module",
   "scripts": {
-    "dev": "tsc -w",
-    "build": "tsc",
+    "prepare": "pnpm build && pnpm dev:prepare",
+    "dev:init": "cd playground && pnpm link --dir playground && pnpm install",
+    "dev:prepare": "cd playground && pnpm install",
+    "dev:armon": "nodemon --watch src --ignore **/node_modules/** --exec \"pnpm build && pnpm dev:prepare\"",
+    "dev:run": "cd playground && pnpm dev",
+    "dev": "concurrently \"pnpm dev:armon\" \"pnpm dev:run\"",
+    "build": "tsc -d --declarationDir dist --declarationMap",
     "preview": "echo 'No preview available yet.'",
     "release": "pnpm build && pnpm dlx changelogen --release && pnpm publish"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.4",
     "typescript": "^5.2.2"
   },
   "dependencies": {
