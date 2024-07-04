@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "prepare": "pnpm link ../",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
@@ -12,5 +11,8 @@
   "devDependencies": {
     "typescript": "^5.2.2",
     "vite": "^5.3.1"
+  },
+  "dependencies": {
+    "@chiballc/armon": "^0.0.1"
   }
 }
