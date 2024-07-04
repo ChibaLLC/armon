@@ -1,6 +1,9 @@
 {
   "name": "@chiballc/armon",
-  "repository": "ChibaLLC/armon",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChibaLLC/armon.git"
+  },
   "description": "A new way to build web apps. No routes, just functions.",
   "private": true,
   "version": "0.0.1",
@@ -17,5 +20,12 @@
   "dependencies": {
     "chokidar": "^3.6.0",
     "h3": "^1.12.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/ChibaLLC/armon/issues"
+  },
+  "homepage": "https://github.com/ChibaLLC/armon#readme",
+  "main": "index.js",
+  "author": "kgarchie",
+  "license": "MIT"
 }
