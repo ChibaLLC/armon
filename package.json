@@ -17,13 +17,13 @@
   },
   "type": "module",
   "scripts": {
-    "prepare": "pnpm build && pnpm dev:prepare",
+    "prepare": "pnpm build && pnpm dev:init",
     "dev:init": "cd playground && pnpm link --dir playground && pnpm install",
     "dev:prepare": "cd playground && pnpm install",
-    "dev:armon": "nodemon --watch src --ignore **/node_modules/** --exec \"pnpm build && pnpm dev:prepare\"",
     "dev:run": "cd playground && pnpm dev",
-    "dev": "concurrently \"pnpm dev:armon\" \"pnpm dev:run\"",
-    "build": "tsc -d --declarationDir dist --declarationMap",
+    "dev": "concurrently \"nodemon --exec pnpm armon\" \"pnpm dev:run\"",
+    "armon": "pnpm build && pnpm dev:prepare",
+    "build": "echo > building... && tsc -d --declarationDir dist --declarationMap",
     "preview": "echo 'No preview available yet.'",
     "release": "pnpm build && pnpm dlx changelogen --release && pnpm publish"
   },

@@ -1,0 +1,10 @@
+{
+    "ext": "js,mjs,cjs,json,ts",
+    "watch": [
+        "src"
+    ],
+    "ignore": [
+        "dist/*",
+        "node_modules/*"
+    ]
+}
