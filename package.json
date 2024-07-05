@@ -18,11 +18,12 @@
   "type": "module",
   "scripts": {
     "prepare": "pnpm build && pnpm dev:init",
-    "dev:init": "cd playground && pnpm link --dir playground && pnpm install",
+    "dev:init": "pnpm link --dir playground && cd playground && pnpm install",
     "dev:prepare": "cd playground && pnpm install",
     "dev:run": "cd playground && pnpm dev",
     "dev": "concurrently \"nodemon --exec pnpm armon\" \"pnpm dev:run\"",
     "armon": "pnpm build && pnpm dev:prepare",
+    "run": "node --loader ts-node/esm src/main.ts",
     "build": "echo > building... && tsc -d --declarationDir dist --declarationMap",
     "preview": "echo 'No preview available yet.'",
     "release": "pnpm build && pnpm dlx changelogen --release && pnpm publish"
@@ -30,7 +31,8 @@
   "devDependencies": {
     "concurrently": "^8.2.2",
     "nodemon": "^3.1.4",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "ts-node": "^10.9.2"
   },
   "dependencies": {
     "chokidar": "^3.6.0",
