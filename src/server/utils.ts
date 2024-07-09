@@ -1,6 +1,6 @@
 import { readdir, lstat, readFile } from 'fs/promises';
 import { H3Event } from 'h3'
-import { join, normalize, sep } from 'path'
+import { join, normalize, sep } from 'node:path'
 
 async function isIgnored(base: string, location: string) {
     const ignored = [
@@ -41,7 +41,7 @@ export async function getStores(base: string, path?: string[]): Promise<string[]
     return path
 }
 
-export async function readArmonFile(): Promise<string | undefined> {
+export async function getServerFilesLocation(): Promise<string | undefined> {
     const workDir = process.cwd()
     const file = await readFile(join(workDir, 'armon.json')).catch(e => {
         console.error(e)
@@ -57,6 +57,22 @@ export async function readArmonFile(): Promise<string | undefined> {
     return content?.server
 }
 
+export async function getClientsFilesLocation(): Promise<string | undefined> {
+    const workDir = process.cwd()
+    const file = await readFile(join(workDir, 'armon.json')).catch(e => {
+        console.error(e)
+        throw new Error("Armon File Not Found. Please add it with a key 'client' containing your client files directory in the root of your projet")
+    })
+
+    try {
+        var content = JSON.parse(file.toString())
+    } catch (e) {
+        throw new Error("Could not parse armon file content")
+    }
+
+    return content?.client
+}
+
 
 export function constructRoutes(root: string, stores: string[]) {
     const escapedRoot = normalize(root).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -67,26 +83,35 @@ export function constructRoutes(root: string, stores: string[]) {
 }
 
 export function constructRouteCallback(_import: any): (event: H3Event) => any {
-    if (typeof _import === "function") {
-        return _import
-    } else {
-        return function eventHandler(event: H3Event) {
-            switch (event.method) {
-                case "GET":
-                    return _import?.get(event)
-                case "POST":
-                    return _import?.post(event)
-                case "PUT":
-                    return _import?.put(event)
-                case "DELETE":
-                    return _import?.delete(event)
-                default:
-                    return (event: H3Event) => `Method ${event.method} not supported`
-            }
+    const instance = isClass(_import) ? new _import() : _import
+    return function eventHandler(event: H3Event) {
+        switch (event.method) {
+            case "GET":
+                return instance?.get(event)
+            case "POST":
+                return instance?.post(event)
+            case "PUT":
+                return instance?.put(event)
+            case "DELETE":
+                return instance?.delete(event)
+            default:
+                return (event: H3Event) => `Method ${event.method} not supported`
         }
     }
 }
 
 export function prependSlash(route: string) {
     return (route.startsWith('/') ? route : `/${route}`).replace(sep, '/').replace(/\.[jt]s$/, '')
+}
+
+function isClass(obj: any) {
+    const isCtorClass = obj.constructor
+        && obj.constructor.toString().substring(0, 5) === 'class'
+    if (obj.prototype === undefined) {
+        return isCtorClass
+    }
+    const isPrototypeCtorClass = obj.prototype.constructor
+        && obj.prototype.constructor.toString
+        && obj.prototype.constructor.toString().substring(0, 5) === 'class'
+    return isCtorClass || isPrototypeCtorClass
 }

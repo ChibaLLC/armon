@@ -1,3 +1,5 @@
 {
-    "server": "./playground/server"
+    "server": "./playground/server",
+    "client": "./playground/client",
+    "port": 3000
 }

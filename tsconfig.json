@@ -26,5 +26,8 @@
     "node_modules",
     "dist",
     "playground",
-  ]
+  ],
+  "ts-node": {
+    "transpileOnly": true
+  }
 }

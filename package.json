@@ -22,12 +22,13 @@
     "dev:run": "cd playground && pnpm dev",
     "dev": "concurrently \"nodemon --exec pnpm armon\" \"pnpm dev:run\"",
     "armon": "pnpm build && pnpm dev:prepare",
-    "run": "node --loader ts-node/esm src/main.ts",
-    "build": "tsc -T -d --declarationDir dist --declarationMap",
+    "serve": "pnpm dlx listhen ./src/server",
+    "build": "tsc -d --declarationDir dist --declarationMap",
     "preview": "echo 'No preview available yet.'",
     "release": "pnpm build && pnpm dlx changelogen --release && pnpm publish"
   },
   "devDependencies": {
+    "@types/node": "^20.14.10",
     "concurrently": "^8.2.2",
     "nodemon": "^3.1.4",
     "ts-node": "^10.9.2",
@@ -35,8 +36,9 @@
   },
   "dependencies": {
     "chokidar": "^3.6.0",
+    "consola": "^3.2.3",
     "h3": "^1.12.0",
-    "ofetch": "^1.3.4"
+    "listhen": "^1.7.2"
   },
   "files": [
     "dist"

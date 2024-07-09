@@ -1,29 +1,35 @@
-import { getStores, readArmonFile, constructRoutes, constructRouteCallback, prependSlash as cleanRoute } from "./utils";
+import { getStores, getServerFilesLocation, constructRoutes, constructRouteCallback, prependSlash as cleanRoute } from "./utils";
 import { createRouter, defineEventHandler } from "h3";
-import { join, normalize } from 'node:path'
+import { join, normalize } from 'node:path';
+import consola from "consola";
 
-const serverFilesLocation = await readArmonFile()
-const router = createRouter()
+async function makeRoutes() {
+    const serverFilesLocation = await getServerFilesLocation()
+    const router = createRouter()
+    const stores = await getStores(serverFilesLocation!)
+    const paths = constructRoutes(serverFilesLocation!, stores)
+    const functions = new Map<string, string[]>()
 
-async function makeEndpoints(){
-    for (let route of constructRoutes(serverFilesLocation!, await getStores(serverFilesLocation!))) {
-        const imports = await import(normalize(join(process.cwd(), serverFilesLocation!, route)))
-        route = cleanRoute(route)
+    for (let path of paths) {
+        const imports = await import(normalize(join(process.cwd(), serverFilesLocation!, path)))
+        const route = cleanRoute(path)
         if (imports.default) {
-            console.log(`Adding route ${route}`)
+            consola.info(`Adding route: ${route}`)
             const callback = constructRouteCallback(imports.default)
             router.use(route, defineEventHandler(callback))
+        } else {
+            for (const key in imports) {
+                if (key === 'default' || key === '__is_handler__') continue
+                consola.info(`Adding route: ${route}/${key}`)
+                const callback = constructRouteCallback(imports[key])
+                router.use(`${route}/${key}`, defineEventHandler(callback))
+            }
         }
-    
-        for (const key in imports) {
-            if (key === 'default') continue
-            console.log(`Adding route ${route}/${key}`)
-            const callback = constructRouteCallback(imports[key])
-            router.use(`${route}/${key}`, defineEventHandler(callback))
-        }
+
+        functions.set(route, Object.keys(imports))
     }
+
+    return { router, functions }
 }
 
-await makeEndpoints()
-
-export { router }
+export { makeRoutes }
