@@ -19,13 +19,16 @@
   "scripts": {
     "prepare": "pnpm build && pnpm link --dir playground && pnpm dev:prepare",
     "dev:prepare": "cd playground && pnpm install",
-    "dev:run": "cd playground && pnpm dev",
-    "dev": "concurrently \"nodemon --exec pnpm armon\" \"pnpm dev:run\"",
+    "dev:serve": "cd playground && pnpm dev",
+    "dev": "concurrently \"nodemon --exec pnpm armon\" \"pnpm dev:serve\"",
     "armon": "pnpm build && pnpm dev:prepare",
     "serve": "pnpm dlx listhen ./src/server",
     "build": "tsc -d --declarationDir dist --declarationMap",
     "preview": "echo 'No preview available yet.'",
     "release": "pnpm build && pnpm dlx changelogen --release && pnpm publish"
+  },
+  "bin": {
+    "armon": "./dist/main.js"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
@@ -37,6 +40,7 @@
   "dependencies": {
     "chokidar": "^3.6.0",
     "consola": "^3.2.3",
+    "get-port-please": "^3.1.2",
     "h3": "^1.12.0",
     "listhen": "^1.7.2"
   },

@@ -1,6 +1,8 @@
 import { readdir, lstat, readFile } from 'fs/promises';
-import { H3Event } from 'h3'
+import { H3Event } from 'h3';
 import { join, normalize, sep } from 'node:path'
+import { getPort } from "get-port-please";
+import consola from 'consola';
 
 async function isIgnored(base: string, location: string) {
     const ignored = [
@@ -54,7 +56,47 @@ export async function getServerFilesLocation(): Promise<string | undefined> {
         throw new Error("Could not parse armon file content")
     }
 
-    return content?.server
+    return content?.server?.files
+}
+
+export async function getSpecifiedServer(): Promise<{
+    host: string,
+    port: number
+}> {
+    const workDir = process.cwd()
+    const file = await readFile(join(workDir, 'armon.json')).catch(e => {
+        console.error(e)
+        throw new Error("Armon File Not Found. Please add it with a key 'server' containing your server files directory in the root of your projet")
+    })
+
+    try {
+        var content = JSON.parse(file.toString())
+    } catch (_) { }
+
+    return content?.server || { host: 'localhost', port: await getPort({ portRange: [3000, 4000] }) }
+}
+
+export async function getSpecifiedClient(): Promise<{
+    host: string;
+    port: number;
+}> {
+    const workDir = process.cwd()
+    const file = await readFile(join(workDir, 'armon.json')).catch(e => {
+        console.error(e)
+        throw new Error("Armon File Not Found. Please add it with a key 'client' containing your client files directory in the root of your projet")
+    })
+
+    try {
+        var content = JSON.parse(file.toString())
+    } catch (e) {
+        throw new Error("Could not parse armon file content")
+    }
+
+    if (!content?.client) throw new Error("Client not found")
+    if (!content.client?.port) {
+        consola.info("Client port not found. Using default port 80")
+    }
+    return { host: content.client.host || 'localhost', port: content.client?.port || 80 }
 }
 
 export async function getClientsFilesLocation(): Promise<string | undefined> {
@@ -70,7 +112,7 @@ export async function getClientsFilesLocation(): Promise<string | undefined> {
         throw new Error("Could not parse armon file content")
     }
 
-    return content?.client
+    return content?.client?.files
 }
 
 

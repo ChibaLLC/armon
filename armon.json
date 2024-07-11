@@ -1,5 +1,12 @@
 {
-    "server": "./playground/server",
-    "client": "./playground/client",
-    "port": 3000
+    "server": {
+        "files": "./playground/server",
+        "port": 3000,
+        "host": "localhost"
+    },
+    "client": {
+        "files": "./playground/client",
+        "port": 5500,
+        "host": "localhost"
+    }
 }

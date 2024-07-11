@@ -1,29 +1,24 @@
-import { createApp } from "h3";
-import { makeRoutes } from "./router";
+import { createApp, Router } from "h3";
+import { watchFiles } from "./router";
 import consola from "consola";
 import { join } from "node:path";
-import { getClientsFilesLocation } from "./utils";
 import { access, mkdir, writeFile } from "node:fs/promises";
 
 const app = createApp()
 
-async function startServer() {
-    const paths = await makeRoutes()
-    const clientFolder = await getClientsFilesLocation()
-    app.use(paths.router)
+async function startServer(clientFolder: string, router: Router, functions: Map<string, string[]>) {
+    app.use(router)
 
-    const functions = paths.functions
+    for (let location of functions.keys()) {
+        const className = location.split('/')[1]
+        if (!className) throw new Error("Invalid route found " + location)
 
-    for (let route of functions.keys()) {
-        const className = route.split('/')[1]
-        if (!className) throw new Error("Invalid route found " + route)
-
-        const _functions = functions.get(route)
+        const _functions = functions.get(location)
         const classFile = `
         export default class ${className}Store {
             ${_functions?.length ? _functions.map(func => {
             return `
-                    async ${func}({data, options}) {
+                    static async ${func}({data, options} = {}) {
                         if(!options) options = {}
                         if(!options?.method) options.method = "GET"
                         if(!options?.method && data) options.method = "POST"
@@ -33,7 +28,7 @@ async function startServer() {
                         if (data) {
                             const payload = JSON.stringify(data)
 
-                            return await fetch(\`${route}/${func}\`, {
+                            return await fetch(\`${location}/${func}\`, {
                                 method: options.method,
                                 headers: {
                                     "Content-Type": "application/json"
@@ -41,30 +36,30 @@ async function startServer() {
                                 body: payload
                             })
                         } else {
-                            return await fetch(\`${route}/${func}\`, {
+                            return await fetch(\`${location}/${func}\`, {
                                 method: options.method
                             })
                         }
                     }`
         }).join('\n') :
                 `
-                async get({options}) {
+                static async get({data, options} = {}) {
                     if(!options) options = {}
                     if(!options?.method) options.method = "GET"
 
-                    return await fetch(\`${route}\`, {
+                    return await fetch(\`${location}\`, {
                         method: options.method
                     })
                 }
 
-                async post({data, options}) {
+                static async post({data, options} = {}) {
                     if(!options) options = {}
                     if(!options?.method) options.method = "POST"
 
                     if (data) {
                         const payload = JSON.stringify(data)
 
-                        return await fetch(\`${route}\`, {
+                        return await fetch(\`${location}\`, {
                             method: options.method,
                             headers: {
                                 "Content-Type": "application/json"
@@ -76,14 +71,14 @@ async function startServer() {
                     }
                 }
 
-                async put({data, options}) {
+                static async put({data, options} = {}) {
                     if(!options) options = {}
                     if(!options?.method) options.method = "PUT"
 
                     if (data) {
                         const payload = JSON.stringify(data)
 
-                        return await fetch(\`${route}\`, {
+                        return await fetch(\`${location}\`, {
                             method: options.method,
                             headers: {
                                 "Content-Type": "application/json"
@@ -95,14 +90,14 @@ async function startServer() {
                     }   
                 }
 
-                async delete({data, options}) {
+                static async delete({data, options} = {}) {
                     if(!options) options = {}
                     if(!options?.method) options.method = "DELETE"
 
                     if (data) {
                         const payload = JSON.stringify(data)
 
-                        return await fetch(\`${route}\`, {
+                        return await fetch(\`${location}\`, {
                             method: options.method,
                             headers: {
                                 "Content-Type": "application/json"
@@ -133,5 +128,5 @@ async function startServer() {
     consola.success("Server started")
 }
 
-startServer()
+watchFiles(startServer)
 export { app }

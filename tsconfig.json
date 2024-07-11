@@ -14,6 +14,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "moduleDetection": "force",
+    "allowJs": true,
     "noEmit": false,
     "strict": true,
     "noUnusedLocals": false,
@@ -26,8 +27,5 @@
     "node_modules",
     "dist",
     "playground",
-  ],
-  "ts-node": {
-    "transpileOnly": true
-  }
+  ]
 }
