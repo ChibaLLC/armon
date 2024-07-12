@@ -6,7 +6,7 @@
   },
   "description": "A new way to build web apps. No routes, just functions.",
   "private": false,
-  "version": "0.0.3",
+  "version": "0.0.4",
   "types": "dist/main.d.ts",
   "module": "ESNext",
   "exports": {
@@ -57,6 +57,6 @@
   "author": "kgarchie",
   "license": "MIT",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.11.0"
   }
 }
