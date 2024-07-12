@@ -50,8 +50,7 @@ async function watchFiles(
         persistent: true
     })
 
-    const routes = async () => await makeRoutes(serverFilesLocation)
-    watcher.on('change', async function (path) {
+    const buildRoutes = async (path)  => {
         consola.info(`File changed: ${path}`)
         const changes = await routes()
         if (changes) {
@@ -60,7 +59,12 @@ async function watchFiles(
             consola.error(`Routes not updated`)
         }
         consola.info(`Routes updated`)
-    })
+    }
+
+    const routes = async () => await makeRoutes(serverFilesLocation)
+    watcher.on('change', buildRoutes)
+    const init = await routes()
+    callback(clientFolder, init.router, init.functions)
 }
 
 export { makeRoutes, watchFiles }
