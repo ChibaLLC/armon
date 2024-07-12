@@ -61,7 +61,8 @@ export async function getServerFilesLocation(): Promise<string | undefined> {
 
 export async function getSpecifiedServer(): Promise<{
     host: string,
-    port: number
+    port: number,
+    secure?: boolean
 }> {
     const workDir = process.cwd()
     const file = await readFile(join(workDir, 'armon.json')).catch(e => {
@@ -76,9 +77,26 @@ export async function getSpecifiedServer(): Promise<{
     return content?.server || { host: 'localhost', port: await getPort({ portRange: [3000, 4000] }) }
 }
 
+export async function getServerEndpoint(): Promise<string> {
+    const server = await getSpecifiedServer()
+    if (server.secure) {
+        return `https://${server.host}:${server.port}`
+    }
+    return `http://${server.host}:${server.port}`
+}
+
+export async function getClientEndpoint(): Promise<string> {
+    const client = await getSpecifiedClient()
+    if (client.secure) {
+        return `https://${client.host}:${client.port}`
+    }
+    return `http://${client.host}:${client.port}`
+}
+
 export async function getSpecifiedClient(): Promise<{
     host: string;
     port: number;
+    secure?: boolean;
 }> {
     const workDir = process.cwd()
     const file = await readFile(join(workDir, 'armon.json')).catch(e => {
@@ -125,19 +143,35 @@ export function constructRoutes(root: string, stores: string[]) {
 }
 
 export function constructRouteCallback(_import: any): (event: H3Event) => any {
-    const instance = isClass(_import) ? new _import() : _import
-    return function eventHandler(event: H3Event) {
-        switch (event.method) {
-            case "GET":
-                return instance?.get(event)
-            case "POST":
-                return instance?.post(event)
-            case "PUT":
-                return instance?.put(event)
-            case "DELETE":
-                return instance?.delete(event)
-            default:
-                return (event: H3Event) => `Method ${event.method} not supported`
+    if (isClass(_import)) {
+        const instance = new _import()
+        return function eventHandler(event: H3Event) {
+            switch (event.method) {
+                case "GET":
+                    return instance?.get(event) || ((event: H3Event) => `Method ${event.method} not supported`)
+                case "POST":
+                    return instance?.post(event) || ((event: H3Event) => `Method ${event.method} not supported`)
+                case "PUT":
+                    return instance?.put(event) || ((event: H3Event) => `Method ${event.method} not supported`)
+                case "DELETE":
+                    return instance?.delete(event) || ((event: H3Event) => `Method ${event.method} not supported`)
+                case "PATCH":
+                    return instance?.patch(event) || ((event: H3Event) => `Method ${event.method} not supported`)
+                case "CONNECT":
+                    return instance?.connect(event) || ((event: H3Event) => `Method ${event.method} not supported`)
+                case "OPTIONS":
+                    return instance?.options(event) || ((event: H3Event) => `Method ${event.method} not supported`)
+                case "TRACE":
+                    return instance?.trace(event) || ((event: H3Event) => `Method ${event.method} not supported`)
+                case "HEAD":
+                    return instance?.head(event) || ((event: H3Event) => `Method ${event.method} not supported`)
+                default:
+                    return (event: H3Event) => `Method ${event.method} not supported`
+            }
+        }
+    } else {
+        return function eventHandler(event: H3Event) {
+            return _import(event)
         }
     }
 }

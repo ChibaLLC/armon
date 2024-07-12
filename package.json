@@ -23,13 +23,13 @@
     "dev:serve": "cd playground && pnpm dev",
     "dev": "concurrently \"nodemon --exec pnpm armon\" \"pnpm dev:serve\"",
     "armon": "pnpm build && pnpm dev:prepare",
-    "serve": "pnpm dlx listhen ./src/server",
+    "serve": "node --es-module-specifier-resolution=node --loader ts-node/esm ./src/main.ts",
     "build": "tsc -d --declarationDir dist --declarationMap",
     "preview": "echo 'No preview available yet.'",
     "release": "pnpm build && pnpm dlx changelogen --release && pnpm publish"
   },
   "bin": {
-    "armon": "node ./dist/main.js"
+    "armon": "node --es-module-specifier-resolution=node ./dist/main.js"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
@@ -43,7 +43,8 @@
     "consola": "^3.2.3",
     "get-port-please": "^3.1.2",
     "h3": "^1.12.0",
-    "listhen": "^1.7.2"
+    "listhen": "^1.7.2",
+    "ufo": "^1.5.3"
   },
   "files": [
     "dist"
@@ -54,5 +55,8 @@
   "homepage": "https://github.com/ChibaLLC/armon#readme",
   "main": "index.js",
   "author": "kgarchie",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }

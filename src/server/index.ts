@@ -3,20 +3,23 @@ import { watchFiles } from "./router";
 import consola from "consola";
 import { join } from "node:path";
 import { access, mkdir, writeFile } from "node:fs/promises";
+import { joinURL } from "ufo";
 
 const app = createApp()
 
-async function startServer(clientFolder: string, router: Router, functions: Map<string, string[]>) {
-    app.use(router)
+async function startServer(config: { clientFolder: string; router: Router; functions: Map<string, string[]>; serverEndpoint: string }) {
+    const methods = new Set(['get', 'post', 'put', 'delete', 'patch', 'options', 'head', 'trace', 'connect'])
+    app.use(config.router)
 
-    for (let location of functions.keys()) {
-        const className = location.split('/')[1]
+    for (let location of config.functions.keys()) {
+        const _locations = location.split('/')
+        const className = _locations[1]
+        const isStore = _locations.at(-1) === 'store'
         if (!className) throw new Error("Invalid route found " + location)
-
-        const _functions = functions.get(location)
+        let _functions = config.functions.get(location)
         const classFile = `
         export default class ${className}Store {
-            ${_functions?.length ? _functions.map(func => {
+            ${isStore ? _functions.map(func => {
             return `
                     static async ${func}({data, options} = {}) {
                         if(!options) options = {}
@@ -28,7 +31,7 @@ async function startServer(clientFolder: string, router: Router, functions: Map<
                         if (data) {
                             const payload = JSON.stringify(data)
 
-                            return await fetch(\`${location}/${func}\`, {
+                            return await fetch(\`${joinURL(config.serverEndpoint, location, func)}\`, {
                                 method: options.method,
                                 headers: {
                                     "Content-Type": "application/json"
@@ -36,7 +39,7 @@ async function startServer(clientFolder: string, router: Router, functions: Map<
                                 body: payload
                             })
                         } else {
-                            return await fetch(\`${location}/${func}\`, {
+                            return await fetch(\`${joinURL(config.serverEndpoint, location, func)}\`, {
                                 method: options.method
                             })
                         }
@@ -47,7 +50,7 @@ async function startServer(clientFolder: string, router: Router, functions: Map<
                     if(!options) options = {}
                     if(!options?.method) options.method = "GET"
 
-                    return await fetch(\`${location}\`, {
+                    return await fetch(\`${joinURL(config.serverEndpoint, location)}\`, {
                         method: options.method
                     })
                 }
@@ -59,7 +62,7 @@ async function startServer(clientFolder: string, router: Router, functions: Map<
                     if (data) {
                         const payload = JSON.stringify(data)
 
-                        return await fetch(\`${location}\`, {
+                        return await fetch(\`${joinURL(config.serverEndpoint, location)}\`, {
                             method: options.method,
                             headers: {
                                 "Content-Type": "application/json"
@@ -78,7 +81,7 @@ async function startServer(clientFolder: string, router: Router, functions: Map<
                     if (data) {
                         const payload = JSON.stringify(data)
 
-                        return await fetch(\`${location}\`, {
+                        return await fetch(\`${joinURL(config.serverEndpoint, location)}\`, {
                             method: options.method,
                             headers: {
                                 "Content-Type": "application/json"
@@ -97,7 +100,7 @@ async function startServer(clientFolder: string, router: Router, functions: Map<
                     if (data) {
                         const payload = JSON.stringify(data)
 
-                        return await fetch(\`${location}\`, {
+                        return await fetch(\`${joinURL(config.serverEndpoint, location)}\`, {
                             method: options.method,
                             headers: {
                                 "Content-Type": "application/json"
@@ -112,9 +115,9 @@ async function startServer(clientFolder: string, router: Router, functions: Map<
             }
         }`
 
-        const filePath = join(clientFolder!, `${className}.js`)
-        await access(clientFolder!).catch(async () => {
-            await mkdir(clientFolder!, { recursive: true })
+        const filePath = join(config.clientFolder!, `${className}.js`)
+        await access(config.clientFolder!).catch(async () => {
+            await mkdir(config.clientFolder!, { recursive: true })
         })
 
         await writeFile(filePath, classFile).catch(e => {

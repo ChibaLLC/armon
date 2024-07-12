@@ -5,3 +5,7 @@ export default class Users {
         return ["allan", "banx"]
     }
 }
+
+export function get(event: H3Event){
+    return ["allan", "banx"]
+}

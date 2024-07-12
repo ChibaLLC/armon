@@ -11,13 +11,13 @@ async function handler(req: any, res: any) {
     app.handler(event)
 }
 
-async function handlerWithCors(req: any, res: any, { host, port }: { host: string, port: number }) {
+async function handlerWithCors(req: any, res: any, { host, port, secure }: { host: string, port: number, secure?: boolean }) {
     const event = new H3Event(req, res)
     handleCors(event, {
-        origin: [`http://${host}:${port}`],
+        origin: [`${secure ? "https" : "http"}://${host}:${port}`],
         credentials: true,
         allowHeaders: "*",
-        methods: ["GET", "POST", "PUT", "DELETE"]
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "CONNECT", "OPTIONS", "TRACE", "HEAD"]
     })
     app.handler(event)
 }

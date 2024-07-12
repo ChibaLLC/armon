@@ -23,6 +23,9 @@ importers:
       listhen:
         specifier: ^1.7.2
         version: 1.7.2
+      ufo:
+        specifier: ^1.5.3
+        version: 1.5.3
     devDependencies:
       '@types/node':
         specifier: ^20.14.10

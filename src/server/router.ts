@@ -1,11 +1,12 @@
-import { getStores, getServerFilesLocation, constructRoutes, constructRouteCallback, prependSlash as cleanRoute, getClientsFilesLocation } from "./utils";
+import { getStores, getServerFilesLocation, constructRoutes, constructRouteCallback, prependSlash as cleanRoute, getClientsFilesLocation, getServerEndpoint } from "./utils";
 import { createRouter, defineEventHandler, Router } from "h3";
 import { join, normalize } from 'node:path';
+import { pathToFileURL } from "node:url";
 import chokidar from "chokidar";
 import consola from "consola";
 
-function getFileUrl(path: string, root: string){
-    return `file://${join(process.cwd(), root, path)}`
+function getFileUrl(path: string, root: string) {
+    return pathToFileURL(join(root, path)).href
 }
 
 async function makeRoutes(serverFilesLocation: string) {
@@ -15,10 +16,10 @@ async function makeRoutes(serverFilesLocation: string) {
     const functions = new Map<string, string[]>()
 
     for (let path of paths) {
-        const imports = await import(getFileUrl(path, serverFilesLocation))
+        const imports = await import(normalize(getFileUrl(path, serverFilesLocation)))
         const route = cleanRoute(path)
         if (imports.default) {
-            consola.info(`Adding route: ${route}`)
+            consola.info(`Adding default route: ${route}`)
             const callback = constructRouteCallback(imports.default)
             router.use(route, defineEventHandler(callback))
         } else {
@@ -38,23 +39,24 @@ async function makeRoutes(serverFilesLocation: string) {
 
 
 async function watchFiles(
-    callback: (clientFolder: string, router: Router, functions: Map<string, string[]>) => void
+    callback: (config: { clientFolder: string; router: Router; functions: Map<string, string[]>, serverEndpoint: string }) => void
 ) {
     const serverFilesLocation = await getServerFilesLocation()
     if (!serverFilesLocation) return consola.error(`Server files location not found`)
     const clientFolder = await getClientsFilesLocation()
     if (!clientFolder) return consola.error(`Client files location not found`)
+    const serverEndpoint = await getServerEndpoint()
 
     const watcher = chokidar.watch(serverFilesLocation, {
         ignored: /node_modules/,
         persistent: true
     })
 
-    const buildRoutes = async (path)  => {
+    const buildRoutes = async (path: string) => {
         consola.info(`File changed: ${path}`)
         const changes = await routes()
         if (changes) {
-            callback(clientFolder, changes.router, changes.functions)
+            callback({ clientFolder, router: changes.router, functions: changes.functions, serverEndpoint: serverEndpoint })
         } else {
             consola.error(`Routes not updated`)
         }
@@ -64,7 +66,7 @@ async function watchFiles(
     const routes = async () => await makeRoutes(serverFilesLocation)
     watcher.on('change', buildRoutes)
     const init = await routes()
-    callback(clientFolder, init.router, init.functions)
+    callback({ clientFolder, router: init.router, functions: init.functions, serverEndpoint: serverEndpoint })
 }
 
 export { makeRoutes, watchFiles }
