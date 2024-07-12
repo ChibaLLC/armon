@@ -4,6 +4,10 @@ import { join, normalize } from 'node:path';
 import chokidar from "chokidar";
 import consola from "consola";
 
+function getFileUrl(path: string, root: string){
+    return `file://${join(process.cwd(), root, path)}`
+}
+
 async function makeRoutes(serverFilesLocation: string) {
     const router = createRouter()
     const stores = await getStores(serverFilesLocation!)
@@ -11,7 +15,7 @@ async function makeRoutes(serverFilesLocation: string) {
     const functions = new Map<string, string[]>()
 
     for (let path of paths) {
-        const imports = await import(normalize(join(process.cwd(), serverFilesLocation, path)))
+        const imports = await import(getFileUrl(path, serverFilesLocation))
         const route = cleanRoute(path)
         if (imports.default) {
             consola.info(`Adding route: ${route}`)

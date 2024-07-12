@@ -1,4 +1,4 @@
-import { app } from "./server/main";
+import { app } from "./server";
 import { H3Event, handleCors } from "h3";
 import { listen } from "listhen";
 import { getSpecifiedClient, getSpecifiedServer } from "./server/utils";
