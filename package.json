@@ -28,7 +28,7 @@
     "release": "pnpm build && pnpm dlx changelogen --release && pnpm publish"
   },
   "bin": {
-    "armon": "./dist/main.js --es-module-specifier-resolution=node"
+    "armon": "./dist/main.js"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
