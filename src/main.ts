@@ -8,7 +8,19 @@ const client = getSpecifiedClient()
 
 async function handler(req: any, res: any) {
     const event = new H3Event(req, res)
-    app.handler(event)
+    const time = Date.now()
+    try {
+        var _res = await app.handler(event)
+    } catch (e) {
+        event.node.res.statusCode = e.statusCode || 500
+        console.error(e?.message || e)
+        event.node.res.end(e.message)
+        return
+    } finally {
+        const duration = Date.now() - time
+        console.info(`${event.method} ${event.path} ${event.node.res.statusCode} ${duration}ms`)
+    }
+    return _res
 }
 
 async function handlerWithCors(req: any, res: any, { host, port, secure }: { host: string, port: number, secure?: boolean }) {
@@ -35,7 +47,6 @@ async function handlerWithCors(req: any, res: any, { host, port, secure }: { hos
     }
     return _res
 }
-
 
 server.then(async ({ host, port }) => {
     const _client = await client

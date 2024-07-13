@@ -21,9 +21,8 @@
     "prepare": "pnpm build && pnpm link --dir playground && pnpm dev:prepare",
     "dev:prepare": "cd playground && pnpm install",
     "dev:serve": "cd playground && pnpm dev",
-    "dev": "concurrently \"nodemon --exec pnpm armon\" \"pnpm dev:serve\"",
-    "armon": "pnpm build && pnpm dev:prepare",
-    "serve": "node --es-module-specifier-resolution=node --loader ts-node/esm ./src/main.ts",
+    "dev": "nodemon --exec pnpm serve",
+    "serve": "concurrently \"node --es-module-specifier-resolution=node --loader ts-node/esm ./src/main.ts\" \"pnpm dev:serve\"",
     "build": "tsc -d --declarationDir dist --declarationMap",
     "preview": "echo 'No preview available yet.'",
     "release": "pnpm build && pnpm dlx changelogen --release && pnpm publish"

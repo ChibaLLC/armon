@@ -146,31 +146,27 @@ export function constructRouteCallback(_import: any): (event: H3Event) => any {
     if (isClass(_import)) {
         const instance = new _import()
         return function eventHandler(event: H3Event) {
-            try {
-                switch (event.method) {
-                    case "GET":
-                        return instance?.get(event)
-                    case "POST":
-                        return instance?.post(event)
-                    case "PUT":
-                        return instance?.put(event)
-                    case "DELETE":
-                        return instance?.delete(event)
-                    case "PATCH":
-                        return instance?.patch(event)
-                    case "CONNECT":
-                        return instance?.connect(event)
-                    case "OPTIONS":
-                        return instance?.options(event)
-                    case "TRACE":
-                        return instance?.trace(event)
-                    case "HEAD":
-                        return instance?.head(event)
-                    default:
-                        throw new Error("Method not allowed")
-                }
-            } catch (e) {
-                return e.message || e
+            switch (event.method) {
+                case "GET":
+                    return instance?.get(event)
+                case "POST":
+                    return instance?.post(event)
+                case "PUT":
+                    return instance?.put(event)
+                case "DELETE":
+                    return instance?.delete(event)
+                case "PATCH":
+                    return instance?.patch(event)
+                case "CONNECT":
+                    return instance?.connect(event)
+                case "OPTIONS":
+                    return instance?.options(event)
+                case "TRACE":
+                    return instance?.trace(event)
+                case "HEAD":
+                    return instance?.head(event)
+                default:
+                    throw new Error("Method not allowed")
             }
         }
     } else {
