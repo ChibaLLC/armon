@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { app } from "./server";
 import { H3CorsOptions, H3Event, handleCors } from "h3";
 import { listen } from "listhen";
