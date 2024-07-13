@@ -6,7 +6,7 @@
   },
   "description": "A new way to build web apps. No routes, just functions.",
   "private": false,
-  "version": "0.0.5",
+  "version": "0.0.6",
   "types": "dist/main.d.ts",
   "module": "ESNext",
   "exports": {
