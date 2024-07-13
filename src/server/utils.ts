@@ -146,27 +146,31 @@ export function constructRouteCallback(_import: any): (event: H3Event) => any {
     if (isClass(_import)) {
         const instance = new _import()
         return function eventHandler(event: H3Event) {
-            switch (event.method) {
-                case "GET":
-                    return instance?.get(event) || ((event: H3Event) => `Method ${event.method} not supported`)
-                case "POST":
-                    return instance?.post(event) || ((event: H3Event) => `Method ${event.method} not supported`)
-                case "PUT":
-                    return instance?.put(event) || ((event: H3Event) => `Method ${event.method} not supported`)
-                case "DELETE":
-                    return instance?.delete(event) || ((event: H3Event) => `Method ${event.method} not supported`)
-                case "PATCH":
-                    return instance?.patch(event) || ((event: H3Event) => `Method ${event.method} not supported`)
-                case "CONNECT":
-                    return instance?.connect(event) || ((event: H3Event) => `Method ${event.method} not supported`)
-                case "OPTIONS":
-                    return instance?.options(event) || ((event: H3Event) => `Method ${event.method} not supported`)
-                case "TRACE":
-                    return instance?.trace(event) || ((event: H3Event) => `Method ${event.method} not supported`)
-                case "HEAD":
-                    return instance?.head(event) || ((event: H3Event) => `Method ${event.method} not supported`)
-                default:
-                    return (event: H3Event) => `Method ${event.method} not supported`
+            try {
+                switch (event.method) {
+                    case "GET":
+                        return instance?.get(event)
+                    case "POST":
+                        return instance?.post(event)
+                    case "PUT":
+                        return instance?.put(event)
+                    case "DELETE":
+                        return instance?.delete(event)
+                    case "PATCH":
+                        return instance?.patch(event)
+                    case "CONNECT":
+                        return instance?.connect(event)
+                    case "OPTIONS":
+                        return instance?.options(event)
+                    case "TRACE":
+                        return instance?.trace(event)
+                    case "HEAD":
+                        return instance?.head(event)
+                    default:
+                        throw new Error("Method not allowed")
+                }
+            } catch (e) {
+                return e.message || e
             }
         }
     } else {
