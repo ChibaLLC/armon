@@ -14,7 +14,7 @@ async function startServer(config: { clientFolder: string; router: Router; funct
     if (!exists) {
         await mkdir(join(config.clientFolder), { recursive: true })
 
-        const utils = await import('../client/utils').then(m => m.default)
+        const utils = await import('../client/utils.js').then(m => m.default)
         if (utils) {
             await writeFile(utilsPath, `export default ${utils.toString()}`).catch(e => {
                 console.error(e)
@@ -207,7 +207,7 @@ async function startServer(config: { clientFolder: string; router: Router; funct
             throw new Error("Could not write file to the client folder")
         })
 
-        consola.info(`Created file ${filePath}`)
+        consola.info(`Created file: ${filePath}`)
     }
 
     consola.success("Server started")

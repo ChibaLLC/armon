@@ -1,4 +1,4 @@
-import { getStores, getServerFilesLocation, constructRoutes, constructRouteCallback, prependSlash as cleanRoute, getClientsFilesLocation, getServerEndpoint } from "./utils";
+import { getStores, getServerFilesLocation, constructRoutes, constructRouteCallback, prependSlash as cleanRoute, getClientsFilesLocation, getServerEndpoint } from "./utils.js";
 import { createRouter, defineEventHandler, Router } from "h3";
 import { join, normalize } from 'node:path';
 import { pathToFileURL } from "node:url";
@@ -19,7 +19,7 @@ async function makeRoutes(serverFilesLocation: string) {
         const imports = await import(normalize(getFileUrl(path, serverFilesLocation)))
         const route = cleanRoute(path)
         if (imports.default) {
-            consola.info(`Adding default route: ${route}`)
+            consola.info(`Adding class route: ${route}`)
             const callback = constructRouteCallback(imports.default)
             router.use(route, defineEventHandler(callback))
         } else {

@@ -23,7 +23,7 @@
     "dev:serve": "cd playground && pnpm dev",
     "dev": "nodemon --exec pnpm serve",
     "serve": "concurrently \"node --es-module-specifier-resolution=node --loader ts-node/esm ./src/main.ts\" \"pnpm dev:serve\"",
-    "build": "tsc -d --declarationDir dist --declarationMap",
+    "build": "tsc && pnpm dev:prepare",
     "preview": "echo 'No preview available yet.'",
     "release": "pnpm build && pnpm dlx changelogen --release && pnpm publish"
   },

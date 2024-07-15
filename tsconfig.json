@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": [
@@ -10,7 +10,7 @@
     ],
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "moduleResolution": "bundler",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "moduleDetection": "force",
@@ -22,6 +22,11 @@
     "noFallthroughCasesInSwitch": true,
     "outDir": "./dist",
     "rootDir": "./src",
+    "declarationDir": "./dist",
+    "declaration": true,
+    "sourceMap": true,
+    "declarationMap": true,
+    "pretty": true
   },
   "exclude": [
     "node_modules",
