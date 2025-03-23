@@ -1,4 +1,4 @@
-import { getStores, getServerFilesLocation, constructRoutes, constructRouteCallback, prependSlash as cleanRoute, getClientsFilesLocation, getServerEndpoint } from "./utils.js";
+import { getStores, getServerFilesLocation, constructRoutes, constructRouteCallback, prependSlash as cleanRoute, getClientsFilesLocation, getServerEndpoint } from "./utils";
 import { createRouter, defineEventHandler, Router } from "h3";
 import { join, normalize } from 'node:path';
 import { pathToFileURL } from "node:url";
@@ -39,12 +39,10 @@ async function makeRoutes(serverFilesLocation: string) {
 
 
 async function watchFiles(
-    callback: (config: { clientFolder: string; router: Router; functions: Map<string, string[]>, serverEndpoint: string }) => void
+    callback?: (config: { clientFolder: string; router: Router; functions: Map<string, string[]>, serverEndpoint: string }) => void
 ) {
     const serverFilesLocation = await getServerFilesLocation()
-    if (!serverFilesLocation) return consola.error(`Server files location not found`)
     const clientFolder = await getClientsFilesLocation()
-    if (!clientFolder) return consola.error(`Client files location not found`)
     const serverEndpoint = await getServerEndpoint()
 
     const watcher = chokidar.watch(serverFilesLocation, {
@@ -56,7 +54,7 @@ async function watchFiles(
         consola.info(`File changed: ${path}`)
         const changes = await routes()
         if (changes) {
-            callback({ clientFolder, router: changes.router, functions: changes.functions, serverEndpoint: serverEndpoint })
+            callback?.({ clientFolder, router: changes.router, functions: changes.functions, serverEndpoint: serverEndpoint })
         } else {
             consola.error(`Routes not updated`)
         }
@@ -66,7 +64,13 @@ async function watchFiles(
     const routes = async () => await makeRoutes(serverFilesLocation)
     watcher.on('change', buildRoutes)
     const init = await routes()
-    callback({ clientFolder, router: init.router, functions: init.functions, serverEndpoint: serverEndpoint })
+    callback?.({ clientFolder, router: init.router, functions: init.functions, serverEndpoint: serverEndpoint })
+    return {
+		clientFolder,
+		router: init.router,
+		functions: init.functions,
+		serverEndpoint: serverEndpoint,
+	};
 }
 
 export { makeRoutes, watchFiles }

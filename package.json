@@ -18,21 +18,13 @@
   },
   "type": "module",
   "scripts": {
-    "prepare": "pnpm build && pnpm link --dir playground && pnpm dev:prepare",
-    "dev:prepare": "cd playground && pnpm install",
-    "dev:serve": "cd playground && pnpm dev",
-    "dev": "nodemon --exec pnpm serve",
-    "serve": "concurrently \"node --es-module-specifier-resolution=node --loader ts-node/esm ./src/main.ts\" \"pnpm dev:serve\"",
-    "build": "tsc && pnpm dev:prepare",
+    "dev": "vinxi dev",
+    "build": "vinxi build",
     "preview": "echo 'No preview available yet.'",
     "release": "pnpm build && pnpm dlx changelogen --release && pnpm publish"
   },
-  "bin": {
-    "armon": "./dist/main.js"
-  },
   "devDependencies": {
     "@types/node": "^20.14.10",
-    "concurrently": "^8.2.2",
     "nodemon": "^3.1.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.2.2"
@@ -43,7 +35,9 @@
     "get-port-please": "^3.1.2",
     "h3": "^1.12.0",
     "listhen": "^1.7.2",
-    "ufo": "^1.5.3"
+    "ofetch": "^1.4.1",
+    "ufo": "^1.5.3",
+    "vinxi": "^0.5.3"
   },
   "files": [
     "dist"
@@ -56,6 +50,7 @@
   "author": "kgarchie",
   "license": "MIT",
   "engines": {
-    "node": ">=20.11.0"
-  }
+    "node": ">=22.14.0"
+  },
+  "packageManager": "pnpm@10.6.5+sha512.cdf928fca20832cd59ec53826492b7dc25dc524d4370b6b4adbf65803d32efaa6c1c88147c0ae4e8d579a6c9eec715757b50d4fa35eea179d868eada4ed043af"
 }
