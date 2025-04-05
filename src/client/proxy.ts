@@ -1,7 +1,6 @@
 import { ofetch } from "ofetch";
 
-const apiBase = {}; // Root object for the proxy
-
+const apiBase = {};
 const apiHandler: ProxyHandler<any> = {
     get(target, property) {
         return new Proxy(() => {}, {

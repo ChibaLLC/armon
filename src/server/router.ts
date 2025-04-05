@@ -1,8 +1,7 @@
 import { getStores, getServerFilesLocation, constructRoutes, constructRouteCallback, prependSlash as cleanRoute, getClientsFilesLocation, getServerEndpoint } from "./utils";
-import { createRouter, defineEventHandler, Router } from "h3";
+import { createRouter, defineEventHandler, Router } from "vinxi/http";
 import { join, normalize } from 'node:path';
 import { pathToFileURL } from "node:url";
-import chokidar from "chokidar";
 import consola from "consola";
 
 function getFileUrl(path: string, root: string) {
@@ -45,10 +44,10 @@ async function watchFiles(
     const clientFolder = await getClientsFilesLocation()
     const serverEndpoint = await getServerEndpoint()
 
-    const watcher = chokidar.watch(serverFilesLocation, {
-        ignored: /node_modules/,
-        persistent: true
-    })
+    // const watcher = chokidar.watch(serverFilesLocation, {
+    //     ignored: /node_modules/,
+    //     persistent: true
+    // })
 
     const buildRoutes = async (path: string) => {
         consola.info(`File changed: ${path}`)
@@ -62,7 +61,7 @@ async function watchFiles(
     }
 
     const routes = async () => await makeRoutes(serverFilesLocation)
-    watcher.on('change', buildRoutes)
+    // watcher.on('change', buildRoutes)
     const init = await routes()
     callback?.({ clientFolder, router: init.router, functions: init.functions, serverEndpoint: serverEndpoint })
     return {

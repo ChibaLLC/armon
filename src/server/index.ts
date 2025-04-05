@@ -1,4 +1,4 @@
-import { Router } from "h3";
+import { Router } from "vinxi/http";
 import { watchFiles } from "./router";
 import consola from "consola";
 import { join } from "node:path";
