@@ -28,7 +28,7 @@ export default createApp({
 		hooks: {
 			dev: {
 				start() {
-					consola.log("Server started");
+					consola.info("Server started");
 				},
 			},
 		},

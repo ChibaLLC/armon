@@ -33,6 +33,6 @@
     "dist",
     "playground",
     "armon.config.ts",
-    "vinxi.config.ts"
+    "app.config.ts"
   ]
 }
