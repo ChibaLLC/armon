@@ -27,3 +27,6 @@ dist
 # env
 .env
 !.env.example
+
+app.config.timestamp_*
+.vinxi

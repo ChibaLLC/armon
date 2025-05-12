@@ -1,0 +1,7 @@
+{
+  "name": "@chiballc/armon-prod",
+  "version": "0.0.7",
+  "type": "module",
+  "private": true,
+  "dependencies": {}
+}

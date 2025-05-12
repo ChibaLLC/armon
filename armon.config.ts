@@ -11,7 +11,7 @@ export default {
 		plugins: () => [],
 	},
 	client: {
-		folder: "./playground/client",
+		folder: "./playground",
 		port: 5500,
 		host: "localhost",
 		plugins: () => [

@@ -1,13 +1,22 @@
 import { createApp } from "vinxi";
 import armonConfig from "./armon.config";
 import consola from "consola";
+import type { Router, App } from "vinxi/http";
+import { makeRoutes } from "./src/server/router";
+import { getServerFilesLocation } from "./src/server/utils";
 
 export default createApp({
 	routers: [
 		{
-			name: "public",
-			type: "static",
-			dir: `${armonConfig.client.folder}/public`,
+			name: "customRouter",
+			type: {
+				async resolveConfig(_router: Router, _: App): Promise<Router> {
+					const { router } = await makeRoutes(_router, await getServerFilesLocation());
+					return router;
+				},
+			},
+			target: "server",
+			handler: "./src/server/handler.ts",
 		},
 		{
 			name: "client",

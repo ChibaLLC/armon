@@ -24,17 +24,17 @@
     "release": "pnpm build && pnpm dlx changelogen --release && pnpm publish"
   },
   "devDependencies": {
-    "@types/node": "^20.14.10",
-    "nodemon": "^3.1.4",
+    "@types/node": "^20.17.46",
+    "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
-    "typescript": "^5.2.2",
-    "vite": "^5.3.1"
+    "typescript": "^5.8.3",
+    "vite": "^5.4.19"
   },
   "dependencies": {
-    "consola": "^3.2.3",
+    "consola": "^3.4.2",
     "ofetch": "^1.4.1",
-    "ufo": "^1.5.3",
-    "vinxi": "^0.5.3"
+    "ufo": "^1.6.1",
+    "vinxi": "^0.5.6"
   },
   "files": [
     "dist"

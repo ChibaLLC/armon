@@ -1,11 +1,10 @@
 import { readdir, lstat, readFile, mkdir } from "fs/promises";
-import { createError, H3Event } from "h3";
 import { join, normalize, sep } from "node:path";
-import { getPort } from "get-port-please";
 import { createInterface } from "node:readline/promises";
 import { createReadStream } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import consola from "consola";
+import { createError, H3Event } from "vinxi/http";
 
 export interface ArmonFile {
 	server: Base;
@@ -65,7 +64,7 @@ export async function getStores(base: string, path?: string[]): Promise<string[]
 	return path;
 }
 
-export async function getServerFilesLocation(): Promise<string | undefined> {
+export async function getServerFilesLocation(): Promise<string> {
 	const location = (await armon)?.server?.folder || join(process.cwd(), "server");
 	const stats = await lstat(location).catch((_) => null);
 	if (stats && stats.isDirectory()) {
@@ -83,7 +82,7 @@ export async function getSpecifiedServer(): Promise<{
 	return (
 		(await armon)?.server || {
 			host: "localhost",
-			port: await getPort({ portRange: [3000, 4000], port: 3000 }),
+			port: 4000,
 		}
 	);
 }
@@ -104,7 +103,7 @@ export async function getSpecifiedClient(): Promise<{
 	return (
 		(await armon)?.client || {
 			host: "localhost",
-			port: await getPort({ portRange: [4000, 5000], port: 4000 }),
+			port: 3000,
 		}
 	);
 }
